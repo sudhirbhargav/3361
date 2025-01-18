@@ -4,7 +4,7 @@ const Product = require("../../models/Product");
 const router = express.Router();
 
 // Get all reviews for a product
-router.get("getreviews/:productId", async (req, res) => {
+router.get("/getreviews/:productId", async (req, res) => {
   try {
     const { productId } = req.params;
     const reviews = await Review.find({ productId }).populate(

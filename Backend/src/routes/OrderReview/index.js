@@ -9,19 +9,25 @@ router.post("/placeorder", async (req, res) => {
 
     let totalPrice = 0;
 
-    // Calculate total price
+    const validatedProducts = [];
     for (const product of products) {
       const productDetails = await Product.findById(product.productId);
       if (!productDetails) {
         return res.status(400).json({ error: "Invalid product ID" });
       }
 
+      const productData = {
+        productId: product.productId,
+        quantity: product.quantity,
+      };
+      validatedProducts.push(productData);
+
       totalPrice += productDetails.price * product.quantity;
     }
 
     const order = new Order({
       userId,
-      products,
+      products: validatedProducts,
       totalPrice,
     });
 
@@ -31,6 +37,7 @@ router.post("/placeorder", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 router.get("/orders/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -43,6 +50,7 @@ router.get("/orders/:userId", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 router.put("/updateorder/:id", async (req, res) => {
   try {
     const { id } = req.params;

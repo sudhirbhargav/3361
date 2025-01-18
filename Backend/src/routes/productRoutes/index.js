@@ -1,6 +1,7 @@
 const express = require("express");
 const Product = require("../../models/Product");
 const Category = require("../../models/Category");
+const { default: mongoose } = require("mongoose");
 const router = express.Router();
 
 router.get("/getproduct", async (req, res) => {
@@ -58,14 +59,20 @@ router.post("/addproduct", async (req, res) => {
   }
 });
 
-router.put("updateproduct/:id", async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.info("id => ", id);
+
     const { name, description, price, categoryId, images, stock, discount } =
       req.body;
 
-    // Validate categoryId if provided
-    const categoryExists = await Category.findById(categoryId);
+    // Validate categoryId format
+    if (categoryId && !mongoose.Types.ObjectId.isValid(categoryId)) {
+      return res.status(400).json({ error: "Invalid category ID format" });
+    }
+
+    const categoryExists = categoryId && (await Category.findById(categoryId));
     if (categoryId && !categoryExists) {
       return res.status(400).json({ error: "Invalid category ID" });
     }
@@ -97,7 +104,7 @@ router.put("updateproduct/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
 

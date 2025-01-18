@@ -5,6 +5,8 @@ const cors = require("cors");
 const authRoutes = require("./src/routes/userRoutes/authRoutes");
 const category = require("./src/routes/categoriesRoutes/index");
 const Product = require("./src/routes/productRoutes/index");
+const Review = require("./src/routes/ReviewRoutes/index");
+const Order = require("./src/routes/OrderReview/index");
 
 const connectDatabase = require("./db");
 
@@ -17,7 +19,9 @@ app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api", category);
-app.use("/api", Product);
+app.use("/api/", Product);
+app.use("/api/", Review);
+app.use("/api/", Order);
 app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {

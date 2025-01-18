@@ -9,6 +9,7 @@ const ProductSchema = new mongoose.Schema({
     ref: "Category",
     required: true,
   },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   images: [{ type: String }], // Array of image URLs
   discound: { type: Number },
   stock: { type: Number, default: 0 },

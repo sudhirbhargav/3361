@@ -10,15 +10,11 @@ const OrderSchema = new mongoose.Schema({
         required: true,
       },
       quantity: { type: Number, required: true },
-      price: { type: Number, required: true }, // Price at the time of purchase
+      // No price here, it will be computed during the request
     },
   ],
   totalPrice: { type: Number, required: true },
-  status: {
-    type: String,
-    default: "placed",
-    enum: ["placed", "shipped", "delivered"],
-  },
+  status: { type: String, default: "placed" },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
