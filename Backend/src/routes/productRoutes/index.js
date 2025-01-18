@@ -1,32 +1,56 @@
 const express = require("express");
 const Product = require("../../models/Product");
+const Category = require("../../models/Category");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/getproduct", async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().populate(
+      "categoryId",
+      "name description"
+    );
     res.status(200).json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/addproduct", async (req, res) => {
   try {
-    const { name, description, price, category } = req.body;
+    const {
+      name,
+      description,
+      price,
+      categoryId,
+      images,
+      stock,
+      discount,
+      userId,
+    } = req.body;
 
-    if (
-      ![
-        "Kitchen Appliances",
-        "Furniture",
-        "Electronics",
-        "Stationery",
-      ].includes(category)
-    ) {
-      return res.status(400).json({ error: "Invalid category" });
+    // Check if category exists
+    const categoryExists = await Category.findById(categoryId);
+    if (!categoryExists) {
+      return res.status(400).json({ error: "Invalid category ID" });
     }
 
-    const product = new Product({ name, description, price, category });
+    // Check if user exists
+    const userExists = await User.findById(userId);
+    if (!userExists) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
+    const product = new Product({
+      name,
+      description,
+      price,
+      categoryId,
+      images, // Array of image URLs
+      stock: stock || 0, // Default to 0 if not provided
+      discount: discount || 0, // Default to 0 if not provided
+      userId, // Associate userId with the product
+    });
+
     const savedProduct = await product.save();
     res.status(201).json(savedProduct);
   } catch (err) {
@@ -34,29 +58,39 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("updateproduct/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, price, category } = req.body;
+    const { name, description, price, categoryId, images, stock, discount } =
+      req.body;
 
-    if (
-      ![
-        "Kitchen Appliances",
-        "Furniture",
-        "Electronics",
-        "Stationery",
-      ].includes(category)
-    ) {
-      return res.status(400).json({ error: "Invalid category" });
+    // Validate categoryId if provided
+    const categoryExists = await Category.findById(categoryId);
+    if (categoryId && !categoryExists) {
+      return res.status(400).json({ error: "Invalid category ID" });
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { name, description, price, category },
+      {
+        name,
+        description,
+        price,
+        categoryId,
+        images,
+        stock,
+        discount,
+        updatedAt: Date.now(), // Update the timestamp
+      },
       { new: true }
-    );
-    if (!updatedProduct)
+    )
+      .populate("categoryId", "name description")
+      .populate("userId", "username email");
+
+    if (!updatedProduct) {
       return res.status(404).json({ error: "Product not found" });
+    }
+
     res.status(200).json(updatedProduct);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -66,9 +100,12 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
     const deletedProduct = await Product.findByIdAndDelete(id);
-    if (!deletedProduct)
+    if (!deletedProduct) {
       return res.status(404).json({ error: "Product not found" });
+    }
+
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
