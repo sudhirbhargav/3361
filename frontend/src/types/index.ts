@@ -4,6 +4,15 @@ export interface User {
   name: string;
 }
 
+export interface CartItems{
+    id: string;
+    name: string;
+    price: string;
+    quantity: string;
+    image: string;
+  
+}
+
 export interface Product {
   id: string;
   name: string;

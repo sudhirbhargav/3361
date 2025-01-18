@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Trash2, Plus, Minus, Tag } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface Address {
   id: string;
@@ -10,22 +11,7 @@ interface Address {
   isDefault: boolean;
 }
 
-const initialCartItems = [
-  {
-    id: 1,
-    name: "Study Desk Pro",
-    price: 199.99,
-    quantity: 1,
-    image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: 2,
-    name: "LED Desk Lamp",
-    price: 49.99,
-    quantity: 2,
-    image: "https://images.unsplash.com/photo-1534073828943-f801091bb18c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-  },
-];
+
 
 const savedAddresses: Address[] = [
   {
@@ -47,28 +33,54 @@ const savedAddresses: Address[] = [
 ];
 
 function Cart() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const {CartItems}=useAuth()
+  console.log("new",typeof Object.entries(CartItems))
+  const data=Object.entries(CartItems);
+
+
+
+  const [cartItems, setCartItems] = useState(() => {
+    if (!CartItems || typeof CartItems !== "object") {
+      return []; // Start with an empty array if CartItems is null or not an array
+    }
+    return Array.isArray(CartItems) ? CartItems : Object.values(CartItems);
+  });
+  
   const [promoCode, setPromoCode] = useState("");
+  
+  console.log("cartItems",cartItems)
   const [selectedAddress, setSelectedAddress] = useState<string>(
     savedAddresses.find(addr => addr.isDefault)?.id || ""
   );
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
+  let subtotal;
+  let discount;
+  let total 
   const [newAddress, setNewAddress] = useState({
     street: "",
     city: "",
     state: "",
     zipCode: "",
   });
+  console.log("length",typeof cartItems)
+if(cartItems===undefined){
+  console.log("yoooooo")
+  subtotal =0;
+   discount = 0;
+   total = subtotal - discount;
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const discount = promoCode === "MIT25" ? subtotal * 0.25 : 0;
-  const total = subtotal - discount;
-
+}
+else{
+  console.log("hiihih")
+   subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+   discount = promoCode === "MIT25" ? subtotal * 0.25 : 0;
+   total = subtotal - discount;
+}
   const updateQuantity = (id: number, change: number) => {
     setCartItems(items =>
       items.map(item =>
         item.id === id
-          ? { ...item, quantity: Math.max(0, item.quantity + change) }
+          ? { ...item, quantity: Math.max(0, Number(item.quantity) + change) }
           : item
       ).filter(item => item.quantity > 0)
     );
@@ -121,7 +133,7 @@ function Cart() {
                           </button>
                           <span className="px-4 py-2 text-gray-900">{item.quantity}</span>
                           <button
-                            onClick={() => updateQuantity(item.id, 1)}
+                            onClick={() => updateQuantity(item.id, +1)}
                             className="p-2 hover:bg-gray-100"
                           >
                             <Plus className="h-4 w-4 text-gray-600" />

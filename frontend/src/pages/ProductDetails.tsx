@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Star, ShoppingCart, MessageSquare, Plus, Minus } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { CartItem, CartItems } from './../types/index';
 
 const product = {
   id: 1,
@@ -39,15 +41,49 @@ const product = {
 
 function ProductDetails() {
   const { id } = useParams();
+  const {setCartItems}=useAuth()
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [newComment, setNewComment] = useState("");
   const [newRating, setNewRating] = useState(5);
 
   const handleAddToCart = () => {
-    // Implement cart functionality
+    const newCartItem :CartItems={
+      id: product.id.toString(),
+    name: product.name,
+    price: product.price.toString(),
+    quantity: quantity.toString(),
+    image: product.images.toString(),
+    }
+  setCartItems((prevCartItems) => {
+      console.log("prevCartItems=",prevCartItems)
+      if(prevCartItems===undefined){
+        const items = prevCartItems ?? [];
+        return [...items, newCartItem];
+      }
+      else{
+      const items = prevCartItems ?? [];
+        console.log("items",items)
+      const existingItemIndex = items.findIndex(
+        (item) => item.id === newCartItem.id
+      );
+  
+      if (existingItemIndex !== -1) {
+        const updatedCartItems = [...items];
+        updatedCartItems[existingItemIndex].quantity =Number(updatedCartItems[existingItemIndex].quantity)+ quantity;
+        return updatedCartItems;
+      }
+  
+      // Add new item to the cart
+      return [...items, newCartItem];
+    }
+    });
     console.log(`Adding ${quantity} ${product.name}(s) to cart`);
+    setQuantity(1)
   };
+
+  
+;
 
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();

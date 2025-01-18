@@ -12,6 +12,7 @@ function Navbar() {
     logout();
     navigate('/login');
   };
+  console.log(user)
 
   return (
     <nav className="bg-white shadow-sm">
