@@ -34,8 +34,8 @@ const savedAddresses: Address[] = [
 
 function Cart() {
   const {CartItems}=useAuth()
-  console.log("new",typeof Object.entries(CartItems))
-  const data=Object.entries(CartItems);
+  // console.log("new",typeof Object.entries(CartItems))
+  // const data=Object.entries(CartItems);
 
 
 
