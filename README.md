@@ -230,3 +230,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 ## Deployed Link
 
 Access the live application here: [MIT Student Marketplace](https://mit-frontend-z7eo.vercel.app/)
+
+## Project Walkthrough Video
+
+Watch a detailed explanation of the entire project here: [MIT Student Marketplace Walkthrough](https://drive.google.com/drive/folders/1levlJVLcagD5c31PMpMX5l1yPAkU_TkG?usp=drive_link)
