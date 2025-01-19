@@ -109,7 +109,7 @@ function Home() {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {topSellingProducts.map((product) => (
+          {/* {topSellingProducts.map((product) => (
             <Link
               key={product.id}
               to={`/products/${product.id}`}
@@ -136,7 +136,7 @@ function Home() {
                 </div>
               </div>
             </Link>
-          ))}
+          ))} */}
         </div>
 
         <div className="mt-12 text-center">
