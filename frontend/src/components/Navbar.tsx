@@ -1,18 +1,28 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { ShoppingCart, Menu, X, LogOut, Store, Package, Home } from 'lucide-react';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import {
+  ShoppingCart,
+  Menu,
+  X,
+  LogOut,
+  Store,
+  Package,
+  Home,
+} from "lucide-react";
+import img from "../../images/MIT_Logo.svg";
 
 function Navbar() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
-  console.log(user)
+  const user = localStorage.getItem("UserName");
+  console.log(user);
 
   return (
     <nav className="bg-white shadow-sm">
@@ -21,8 +31,9 @@ function Navbar() {
           {/* Logo and Primary Nav */}
           <div className="flex">
             <Link to="/" className="flex items-center">
-              <Store className="h-8 w-8 text-indigo-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">MIT Marketplace</span>
+              <img src={img} alt="logo" className="h-20 w-15 items-start	" />
+              {/* <Store className="h-8 w-8 text-indigo-600" /> */}
+              {/* <span className="ml-2 text-xl font-bold text-gray-900">MIT Marketplace</span> */}
             </Link>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
@@ -53,7 +64,7 @@ function Navbar() {
           <div className="hidden sm:flex sm:items-center sm:space-x-4">
             {user ? (
               <>
-                <span className="text-sm text-gray-700">Welcome, {user.name}</span>
+                <span className="text-sm text-gray-700">Welcome, {user}</span>
                 <Link
                   to="/cart"
                   className="p-2 text-gray-700 hover:text-indigo-600 relative"
@@ -98,7 +109,7 @@ function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      <div className={`sm:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
+      <div className={`sm:hidden ${isMenuOpen ? "block" : "hidden"}`}>
         <div className="pt-2 pb-3 space-y-1">
           <Link
             to="/"

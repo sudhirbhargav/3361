@@ -103,13 +103,13 @@ function Home() {
 
       {/* Top Selling Products */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="flex items-center mb-8">
+        {/* <div className="flex items-center mb-8">
           <TrendingUp className="h-8 w-8 text-indigo-600 mr-3" />
           <h2 className="text-3xl font-bold text-gray-900">Top Selling Products</h2>
-        </div>
+        </div> */}
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {topSellingProducts.map((product) => (
+          {/* {topSellingProducts.map((product) => (
             <Link
               key={product.id}
               to={`/products/${product.id}`}
@@ -136,7 +136,7 @@ function Home() {
                 </div>
               </div>
             </Link>
-          ))}
+          ))} */}
         </div>
 
         <div className="mt-12 text-center">

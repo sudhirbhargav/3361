@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Search, Filter, Star } from 'lucide-react';
+import tokens from 'razorpay/dist/types/tokens';
 
 const categories = [
   "All Categories",
@@ -9,6 +11,7 @@ const categories = [
   "Kitchen",
   "Textbooks",
   "Decor",
+  "Stationery", // Added this based on the API response
 ];
 
 const sortOptions = [
@@ -19,31 +22,44 @@ const sortOptions = [
   { value: "rating", label: "Highest Rated" },
 ];
 
-const products = [
-  {
-    id: 1,
-    name: "Study Desk Pro",
-    category: "Furniture",
-    price: 199.99,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    id: 2,
-    name: "LED Desk Lamp",
-    category: "Electronics",
-    price: 49.99,
-    rating: 4.7,
-    image: "https://images.unsplash.com/photo-1534073828943-f801091bb18c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-  },
-  // Add more products as needed
-];
-
 function Products() {
+  const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [sortBy, setSortBy] = useState("popular");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch products from the API
+    const fetchProducts = async () => {
+      try {
+        let token=localStorage.getItem("authToken");
+        // const response = await axios.get("https://mitbackend-5s9a.onrender.com/api/getproduct");
+        const response = await axios.get('https://mitbackend-5s9a.onrender.com/api/getproduct', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        const data = response.data.map((product) => ({
+          id: product._id,
+          name: product.name,
+          category: product.category.name,
+          price: product.price,
+          rating: product.reviews.reduce((acc, review) => acc + review.rating, 0) / product.reviews.length || 0,
+          image: product.images[0], // Using the first image in the list
+        }));
+        setProducts(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -51,6 +67,10 @@ function Products() {
     const matchesPrice = product.price >= priceRange.min && product.price <= priceRange.max;
     return matchesSearch && matchesCategory && matchesPrice;
   });
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading products...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -154,7 +174,7 @@ function Products() {
                       <span className="text-2xl font-bold text-indigo-600">${product.price}</span>
                       <div className="flex items-center">
                         <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                        <span className="ml-1 text-gray-600">{product.rating}</span>
+                        <span className="ml-1 text-gray-600">{product.rating.toFixed(1)}</span>
                       </div>
                     </div>
                     <div className="mt-2 text-sm text-gray-500">{product.category}</div>
