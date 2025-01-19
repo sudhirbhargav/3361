@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post('https://mitbackend-shcm.onrender.com/api/auth/login', {
+      const response = await axios.post('https://mitbackend-5s9a.onrender.com/api/auth/login', {
         email,
         password,
       });
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signup = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post('https://mitbackend-shcm.onrender.com/api/auth/signup', {
+      const response = await axios.post('https://mitbackend-5s9a.onrender.com/api/auth/signup', {
         username,
         email,
         password,
