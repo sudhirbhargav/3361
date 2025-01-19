@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Trash2, Plus, Minus, Tag } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import axios from 'axios';
 
 // Load Stripe with your publishable key
 const stripePromise = loadStripe('your-publishable-key-here');
@@ -139,7 +141,7 @@ function Cart() {
             {/* Payment Form */}
             {showPaymentForm ? (
               <Elements stripe={stripePromise}>
-                <PaymentForm total={total} />
+                <PaymentForm total={total} cartItems={cartItems} />
               </Elements>
             ) : (
               <div className="bg-white rounded-lg shadow-sm p-6">
@@ -176,36 +178,70 @@ function Cart() {
   );
 }
 
-function PaymentForm({ total }: { total: number }) {
+function PaymentForm({ total, cartItems }: { total: number; cartItems: any[] }) {
   const stripe = useStripe();
   const elements = useElements();
+  const token=localStorage.getItem("authToken")
 
   const handlePayment = async () => {
-    if (!stripe || !elements) return;
+    // if (!stripe || !elements) return;
 
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) return;
+    // const cardElement = elements.getElement(CardElement);
+    // if (!cardElement) return;
 
-    // Replace this with your backend endpoint for creating payment intents
-    const response = await fetch('pk_test_51IVDGEKLo7MPx8RgPX4Hw29XNWpAh5y8QpuIrhQQueF8vAwuFtCfQw1h0MRoZub6Xl5NNxSJRfQauNHdy7Y3YlAR00uV0iJMIQ', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: total * 100 }), // Stripe expects amounts in cents
-    });
+    // try {
+    //   // Step 1: Create Payment Intent
+    //   const paymentIntentResponse = await axios.post(
+    //     'https://mitbackend-5s9a.onrender.com/api/create-payment-intent',
+    //     {
+    //       amount: total * 100, // Stripe expects amounts in cents
+    //     }
+    //   );
 
-    const { clientSecret } = await response.json();
+    //   const { clientSecret } = paymentIntentResponse.data;
 
-    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: cardElement,
-      },
-    });
+    //   // Step 2: Confirm Card Payment
+    //   const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+    //     payment_method: {
+    //       card: cardElement,
+    //     },
+    //   });
 
-    if (error) {
-      console.error(error.message);
-    } else {
-      console.log('Payment successful:', paymentIntent);
-    }
+    //   if (error) {
+    //     console.error('Payment Error:', error.message);
+    //     alert('Payment failed: ' + error.message);
+    //     return;
+    //   }
+
+    //   console.log('Payment successful:', paymentIntent);
+
+      // Step 3: Place Order
+      const orderResponse = await axios.post(
+        'https://mitbackend-5s9a.onrender.com/api/placeorder',
+        {
+          products: cartItems.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity,
+          })),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token in the Authorization header
+          },
+        }
+      );
+      if (orderResponse.status === 201) {
+        console.log('Order placed successfully!');
+        toast.success('Order placed successfully!');
+      } else {
+        console.error('Error placing order:', orderResponse.data);
+        toast.error(`Order placement failed: ${orderResponse.data.message}`);
+      }
+    
+    // catch (error) {
+    //   console.error('Error during payment process:', error);
+    //   alert('An error occurred: ' + error.message);
+    // }
   };
 
   return (
@@ -218,8 +254,9 @@ function PaymentForm({ total }: { total: number }) {
       >
         Pay ${total.toFixed(2)}
       </button>
+
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 }
-
 export default Cart;
