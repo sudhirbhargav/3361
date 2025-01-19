@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { ShoppingCart, Menu, X, LogOut, Store, Package, Home } from 'lucide-react';
 
 function Navbar() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -12,6 +12,7 @@ function Navbar() {
     logout();
     navigate('/login');
   };
+  const user=localStorage.getItem("UserName")
   console.log(user)
 
   return (
@@ -53,7 +54,7 @@ function Navbar() {
           <div className="hidden sm:flex sm:items-center sm:space-x-4">
             {user ? (
               <>
-                <span className="text-sm text-gray-700">Welcome, {user.name}</span>
+                <span className="text-sm text-gray-700">Welcome, {user}</span>
                 <Link
                   to="/cart"
                   className="p-2 text-gray-700 hover:text-indigo-600 relative"

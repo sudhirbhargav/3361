@@ -22,6 +22,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const apiKey = import.meta.env.VITE_API_KEY;
+import { name } from './../../node_modules/react-spinners/dist/storybook/sb-addons/essentials-controls-2/manager-bundle';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -57,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { token, user: userData } = response.data;
 
       localStorage.setItem("authToken", token);
+      localStorage.setItem("UserName",userData.username)
 
       setUser({
         id: userData.id,
@@ -73,11 +75,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("authToken");
+    localStorage.removeItem("UserName")
+    
   };
 
   const signup = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post(`${apiKey}/api/auth/signup`, {
+      const response = await axios.post(`${apiKey}api/auth/signup`, {
         username,
         email,
         password,
