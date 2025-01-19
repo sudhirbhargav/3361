@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../../models/user");
+const User = require("../../models/User");
 
 const router = express.Router();
 const SECRET = process.env.JWT_SECRET || "your_jwt_secret_key";
@@ -10,13 +10,11 @@ router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: "Email is already registered" });
     }
 
-    // Hash the password before saving the user
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User({ username, email, password: hashedPassword });
@@ -44,7 +42,6 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, SECRET, { expiresIn: "1h" });
 
-    // Include user information in the response
     res.status(200).json({
       message: "Login successful",
       token,
