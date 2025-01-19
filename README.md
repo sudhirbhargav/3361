@@ -136,11 +136,10 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 
 ---
 
-## Contact Information
-
-- **Name:** Sudhir Bhargav
-- **Email:** [Sudhirbhargav100@gmail.com](mailto:Sudhirbhargav100@gmail.com)
-- **GitHub:** [sudhirbhargav](https://github.com/sudhirbhargav)
+## Contact Information of Team members
+1. **Sudhir Bhargav** [**Email:** [Sudhirbhargav100@gmail.com](mailto:Sudhirbhargav100@gmail.com) **GitHub:** [sudhirbhargav](https://github.com/sudhirbhargav)]
+2. **Nisarg Shah** [**Email:** [shahnisarg23@gmail.com](mailto:shahnisarg23@gmail.com) **GitHub:** [nisargshah](https://github.com/nisargshah23)]
+3. **Deepanshi Garg** [**Email:** [deepanshigarg1307@gmail.com](mailto:deepanshigarg1307@gmail.com) **GitHub:** [deepanshigarg](https://github.com/deepanshi-garg)]
 
 ---
 
